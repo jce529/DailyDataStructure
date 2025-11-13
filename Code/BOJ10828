@@ -1,0 +1,120 @@
+package BOJ10828;
+import java.util.*;
+
+public class BOJ10828 {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        int n = Integer.parseInt(input.nextLine());
+        MyStack<Integer> myStack = new MyStack<Integer>();
+        for(int i = 0; i < n; i++){
+            String[] order = input.nextLine().split(" ");
+            switch(order[0]){
+
+                case "push" :
+                    int pushNum = Integer.parseInt(order[1]);
+                    myStack.push(pushNum);
+                    break;
+
+
+                case "pop" :
+                    try {System.out.println(myStack.pop());}
+                    catch(EmptyStackException e) {System.out.println(-1);}
+                    break;
+
+
+                case "size" :
+                    System.out.println(myStack.size());//사이즈 값을 출력
+                    break;
+
+                case "top" :
+                    if (myStack.isEmpty()){//비었으면 -1 출력
+                    System.out.println(-1);
+                    break;
+                    }
+                    //아님 가장 높은 숫자리턴 ㅇㅇ
+                    System.out.println(myStack.top());
+                    break;
+
+                case "empty" :
+                    if(!myStack.isEmpty()){//차있으면 0
+                    System.out.println(0);
+                    break;
+                    }
+                    if(myStack.isEmpty()){//비었으면 1
+                    System.out.println(1);
+                    break;
+                    }
+
+            }
+        }
+
+        input.close();
+    }
+}
+
+class MyStack <E>{
+    private static final int DEFAULT_CAPACITY=10; //기본 용량
+    private Object[] arr; //요소를 담을 내부 배열
+    private int top; //가장 나중에 들어온 값의 인덱스를 추적하는 변수
+
+    MyStack(){
+        this.arr = new Object[DEFAULT_CAPACITY];//기본 용량만큼 배열 설정ㅇ
+        this.top = -1;//가장 위의 인덱스값 (없을 땐 -1)
+    }
+
+    public boolean isEmpty(){
+        return top == -1;//비어있으면 리턴
+    }
+    public boolean isFull(){
+        return top == arr.length-1;//배열의 길이와 top의 값이 같으면 리턴
+    }
+
+    public void reSize(){
+        int arrCapacity= arr.length -1 ;//배열의 길이
+
+        if (top == arrCapacity){//배열이 꽉 찼으면 isFull()로 대체 가능할 듯?
+            int newArrCapacity = arr.length*2; //새로운 배열의 길이를 두배로 잡고
+            arr = Arrays.copyOf(arr, newArrCapacity);//기존의 2배길이의 배열에 기존 arr을 복사하고 arr에 할당.
+
+            return;
+        }
+
+        if (top < arrCapacity/2){//배열의 길이의 절반 보다 요소의 길이가 짧으면
+            int newArrCapacity = arr.length/2; //새로운 배열의 기존의 절반으로 잡고
+            //기본값과 새로운 배열의 길이중에서 큰 것을 배열의 길이로 잡고 복사
+            arr = Arrays.copyOf(arr, Math.max(newArrCapacity,DEFAULT_CAPACITY));
+            return;
+        }
+    }
+
+    public int size(){ //크기 추적하는 거니까, 마지막값 인덱스 + 1;
+        return top+1;
+    }
+
+    public E top(){
+        return (E)arr[top];//그냥 최고값 리턴 ㅇㅇ;
+    }
+
+    public E push(E value){
+        if (isFull()){//만약 꽉차면
+            reSize();//리사이즈(아마 늘리니까 만약 resize를 나누면 연산량 줄듯?)
+        }
+
+        top++; //하나늘어나니까 top값 늘리고
+
+        arr[top] = value; //가장 위쪽의 인덱스에 value할당
+        return value;
+    }
+
+    public E pop(){
+        if (isEmpty()){
+            throw new EmptyStackException();
+        }
+
+        E value = (E) arr[top];
+
+        top--;
+        arr[top+1] = null;
+        return value;
+    }
+}
