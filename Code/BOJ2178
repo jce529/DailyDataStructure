@@ -1,0 +1,75 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+    Scanner input = new Scanner(System.in);
+    //행 이동
+    int[] moveRow = {-1, 1, 0, 0};
+    //열 이동
+    int[] moveColumn = {0, 0, 1, -1};
+    
+    
+    String[] NM = input.nextLine().split(" ");
+    //맵의 세로길이
+    int n = Integer.parseInt(NM[0]);
+    //맵의 가로길이
+    int m = Integer.parseInt(NM[1]);
+    
+    
+    //맵 배열 선언
+    int[][] map = new int[n][m];
+    
+    for (int i = 0; i < n; i++){
+      //구분자 없이 연결된 형태여서 한번에 받은 다음
+      String row = input.nextLine();
+      for (int j = 0; j < m; j++){
+        //각각의 인덱스에 맞춰서 뺴기
+        char c = row.charAt(j);
+        //char 형태여서 '0'에 해당하는 아스키코드를 빼면 int형으로 변환
+        //이거 첨알았는데 이런거 있으면 편하겠당
+        map[i][j] = c - '0';
+      }
+    }
+      //큐 선언
+      Queue<int[]> queue = new LinkedList<>();
+      //방문처리용 2차원 배열
+      boolean[][] isVisited = new boolean[n][m];
+      //얼마나 이동했는지 알아보는 2차원 배열
+      int[][] D = new int[n][m];
+      
+      queue.add(new int[] {0, 0});
+      isVisited[0][0] = true;
+      D[0][0] = 1;//자기자신을 포함하므로 1부터 시작
+      
+      while(!queue.isEmpty()){
+        
+      //현재 인덱스
+      int[] nowIndex = queue.poll();
+      int r = nowIndex[0];//세로 인덱스
+      int c = nowIndex[1];//가로 인덱스
+      for (int i = 0; i < 4; i++){
+      //for문 돌면서 동서남북 확인하기
+        //행이동 후 인덱스
+        int nextR = r + moveRow[i];
+        //열 이동 후 인덱스
+        int nextC = c + moveColumn[i];
+        
+        //지도 안에서 이동하는지 확인
+        if (nextR >= 0 && nextR < n && nextC >= 0 && nextC < m){
+            //다음 인덱스가 길이고, 방문안했으면
+          if (map[nextR][nextC] == 1 && !isVisited[nextR][nextC]){
+            //큐에 다음 인덱스 넣기
+            queue.add(new int[] {nextR, nextC});
+            //다음 인덱스 방문처리
+            isVisited[nextR][nextC] = true;
+            //한칸 이동했으므로 다음 인덱스에 거리 +1하기
+            D[nextR][nextC] = D[r][c] + 1;
+          }
+        }
+      }
+      
+    }
+    //마지막 거리 출력
+    System.out.println(D[n-1][m-1]);
+  }
+}
