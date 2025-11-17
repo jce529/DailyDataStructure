@@ -1,0 +1,81 @@
+import java.util.*;
+
+public class Main {
+    //행이동용 배열
+    private static int[] dr = {-1, 1, 0, 0};
+    private static int[] dc = {0, 0, -1, 1};
+    
+
+    //단지의 수를 저장할 변수 선언
+    private static int DanJi = 0;
+    //단지 내의 집의 수를 저장할 벡터 선언;
+    private static Vector<Integer> houseN = new Vector<>();
+    
+    private static int[][] map;
+    private static boolean[][] isVisited;
+    private static int mapSize;
+    
+    public static void main(String[] args) {
+    Scanner input = new Scanner(System.in);
+    
+    mapSize = Integer.parseInt(input.nextLine());
+    map = new int[mapSize][mapSize];
+    isVisited = new boolean[mapSize][mapSize];
+    
+    for (int i = 0; i < mapSize; i++){
+      //행 받아오기
+      String Row = input.nextLine();
+      
+      for (int j = 0; j < mapSize; j++){
+        //해당 행에 인덱스j의 문자를 받아서
+        char c = Row.charAt(j);
+        map[i][j] = c - '0';//int형으로 바꾼다음에 맵에 넣기
+      }
+    }
+    //맵 구현 완료
+    //이제 dfs로 이동하면서 해당 단지안의 집의의 수를 샐거고 새로운 단지를 찾을때 마다 int배열형의 vector로
+    //단지의 개수를 샐겁니다.
+    
+    //이제 dfs를 각 인덱스별로 실행하기
+    for (int i = 0; i < mapSize; i++){
+      for (int j = 0; j < mapSize; j ++){
+        if (map[i][j] == 1 && !isVisited[i][j]){
+          DanJi ++;
+          int count = dfs(i, j);
+          houseN.add(count);
+        }
+      }
+    }
+    System.out.println(DanJi);
+    Collections.sort(houseN);
+    
+    for (int count : houseN){
+      System.out.println(count);
+    }
+  }
+  
+  static int dfs(int row, int col){
+    isVisited[row][col] = true;
+    
+    int count = 1;
+    //종료 조건 : 끝까지 가면(별도로 설정할 필요 x)
+    for (int i = 0; i < 4; i++){
+      //다음 행렬 계산
+      int nextRow = row + dr[i];
+      int nextCol = col + dc[i];
+      
+      //맵을 벗어나지 않았다면
+      if(nextRow >= 0 && nextRow < map.length && nextCol >= 0 && nextCol < map.length){
+        if (map[nextRow][nextCol] == 1 && !isVisited[nextRow][nextCol]){
+          //조건을 만족하면 다음 함수불러오기
+          
+          count += dfs(nextRow, nextCol);
+        }
+        
+        
+      }
+    }
+    
+    return count;
+  }
+}
