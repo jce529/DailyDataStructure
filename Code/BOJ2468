@@ -1,0 +1,70 @@
+import java.util.*;
+
+public class Main {
+    static boolean[][] isVisited;
+    static int[][] hightMap;
+    static int maxHight;
+    static int[] dr = {1, -1, 0, 0};
+    static int[] dc = {0, 0, 1, -1};
+    static int safty;
+    static int answer;
+
+    public static void main(String[] args) {
+    Scanner input = new Scanner(System.in);
+    
+    int n = input.nextInt();//맵 크기
+    hightMap = new int[n][n];
+    isVisited = new boolean[n][n];
+    
+    for (int i = 0; i < n; i++){
+      for (int j = 0; j < n; j ++){
+        hightMap[i][j] = input.nextInt();//높이 맵 받아오기
+        maxHight = Math.max(maxHight, hightMap[i][j]);//최고 높이 받아오기
+      }
+    }
+    
+    for (int waterHight = 0; waterHight < maxHight + 1; waterHight++){//수위를 하나씩 높여가며 반복
+      isVisited = new boolean[n][n];
+      safty = 0;//수위를 하나 높일 때 마다 안전구역을 초기화
+      for (int i = 0; i < n; i++){//2중 for 문으로 맵 전역을 확인하며
+        for (int j = 0; j < n; j++){
+          if(hightMap[i][j] > waterHight && !isVisited[i][j]){
+            //새로운 안전구역을 방문하면
+            bfs(i, j, n, waterHight);//bfs하며 영역을 전부 방문처리
+            safty++;//안전구역 개수 +
+          }
+        }
+      }
+      answer = Math.max(answer, safty);//기존의 안전구역보다 더 많으면 바꾸기
+    }
+    
+    System.out.println(answer);
+    
+    
+    
+  }
+  static void bfs(int x, int y, int n, int waterHight){
+    Queue<int[]> q = new LinkedList<>();//큐 선언
+    
+    q.add(new int[] {x, y});//큐에 해당 인덱스 추가
+    isVisited[x][y] = true;// 해당 인덱스 방문처리
+    
+    while(!q.isEmpty()){//큐가 빌 때 까지 반복
+      int[] index = q.poll();//현재 인덱스를 저장, 큐에서 제거
+      
+      for (int i = 0; i < 4; i++){//4방위를 전부 탐색
+        int nr = index[0] + dr[i];
+        int nc = index[1] + dc[i];
+        
+        if (nr >= 0 && nr < n && nc >= 0 && nc < n){//인덱스가 맵 내에 있으면
+          if (hightMap[nr][nc] > waterHight && !isVisited[nr][nc]){//그 중에서 수위보다 높고 방문안한 곳을 방문처리
+            q.add(new int[] {nr, nc});
+            isVisited[nr][nc] = true;
+          }
+        }
+      }
+    }
+  }
+  
+}
+
