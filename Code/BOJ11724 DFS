@@ -1,0 +1,59 @@
+import java.util.*;
+
+public class Main {
+  
+    static int c = 0;
+
+    public static void main(String[] args) {
+    Scanner input = new Scanner(System.in);
+    
+    int n = input.nextInt() + 1;//노드의 개수
+    int m = input.nextInt();//간선의 개수
+    
+    int[][] graph = new int[n][n]; //노드간의 연결을 표시할 2차원 그래프프
+    
+    for (int i = 0; i < m; i++){
+      //간선의 개수만큼 반복
+      int x = input.nextInt();
+      int y = input.nextInt();
+      
+      graph[x][y] = 1;
+      graph[y][x] = 1;
+    }
+    //아마 이 문제는 dfs, bfs 둘 다 풀 수 있을 듯?
+    
+    //dfs 풀이
+    
+    
+    boolean[] isVisited = new boolean[n];//해당 노드를 방문했는지 확인하기 위한 배열 선언
+
+    for (int i = 1; i < n; i++){
+      //노드의 숫자만큼 반복
+      if (!isVisited[i]){
+        //해당 노드를 방문하지 않았다면
+        c++;//c값을 증가
+        dfs(graph, isVisited, i);
+      }
+    }
+    
+    System.out.println(c);
+  }
+  
+  private static void dfs(int[][] graph, boolean[] isVisited, int startNode){
+    //현재 노드가 이미 방문했음
+    if(isVisited[startNode]){
+      return;
+    }
+    
+    //방문처리
+    isVisited[startNode] = true;
+    
+    for(int j = 1; j < graph[startNode].length; j++ ){
+      //해당 노드와 연결되어 있는 노드를 탐색
+      if(graph[startNode][j] == 1 && !isVisited[j]){
+        //연결되어있고, 방문하지 않았으면
+        dfs(graph, isVisited, j);//j의 dfs 출발
+      }
+    }
+  }
+}
