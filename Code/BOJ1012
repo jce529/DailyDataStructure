@@ -1,0 +1,68 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+      //1012번 배추 보호하기
+      //지렁이를 이용해서 보호하는 데 인접한 타일에 있는 배추를 보호할 수 있음
+      //즉 최대 5타일의 배추를 보호할 수 있음
+      Scanner input = new Scanner(System.in);
+      int[] dr = {1, -1, 0, 0};
+      int[] dc = {0, 0, 1, -1};
+      
+      int T = input.nextInt();
+      
+      for (int t = 0; t < T; t++){
+      
+        int n = input.nextInt();//배추밭의 세로 길이
+        int m = input.nextInt();//배추밭의 가로 길이
+        int k = input.nextInt(); //심을 배추의 개수
+        
+        int[][] farm = new int[n][m];//실제 배추밭의 인덱스
+        boolean[][] isProtected = new boolean[n][m]; //해당 배추가 보호되어있는지
+        
+        int worm = 0;//지렁이의 수
+      
+        for (int i = 0; i < k; i++){
+          int x = input.nextInt(); //심을 배추의 x좌표
+          int y = input.nextInt(); //심을 배추의 y좌표
+          
+          farm[x][y] = 1;//해당 좌표에 배추 심기
+        }
+      
+        for (int i = 0; i < n; i++){
+          for (int j = 0; j < m; j ++){
+            if (farm[i][j] == 1 && !isProtected[i][j]){
+              worm ++;
+              //새로운 군집을 찾았으니 지렁이 투하하
+              Queue<int[]> queue = new LinkedList<int[]>();
+              //새로운 큐를 선언하고 bfs탐색으로 모든 배추를 보호처리
+              queue.add(new int[] {i, j});//해당 좌표를 큐에 넣고
+              isProtected[i][j] = true;//보호처리
+              
+              while(!queue.isEmpty()){
+                int[] index = queue.poll();
+                
+                for (int a = 0; a < 4; a++){
+                  int nextR = index[0] + dr[a];
+                  int nextC = index[1] + dc[a];
+                  
+                  if(nextR >= 0 && nextR < n && nextC >= 0 && nextC < m){
+                    //정해진 맵을 벗어나지 않았다면
+                    if (farm[nextR][nextC] == 1 && !isProtected[nextR][nextC]){
+                      //주변에 아직 보호되지 않은 배추가 있다면
+                      queue.add(new int[] {nextR, nextC});
+                      isProtected[nextR][nextC] = true;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+      
+        System.out.println(worm);
+      }
+      
+   }
+}
