@@ -1,0 +1,71 @@
+import java.util.*;
+
+public class Main {
+    static int day = -1;
+    static int unripeTomato;
+    static int[] dr = {1, -1, 0, 0};
+    static int[] dc = {0, 0, 1, -1};
+    
+    public static void main(String[] args) {
+    Scanner input = new Scanner(System.in);
+    
+    int m = input.nextInt();//토마토 맵의 가로
+    int n = input.nextInt();//토마토 맵의 세로
+    
+    int[][] totmato = new int[n][m];//토마토 맵
+    Queue<int[]> q = new LinkedList<>();//큐 선언
+
+    
+    unripeTomato = 0;//익지 않은 토마토
+    
+    for (int i = 0; i < n; i++){
+      for (int j = 0; j < m; j++){
+        int nextTotmato = input.nextInt();//현재 인덱스의 토마토의 상태 받기
+        if (nextTotmato == 0) unripeTomato++;//만약에 해당 토마토가 안익은 토마토면 안익은 토마토 증가
+        totmato[i][j] = nextTotmato;//토마토 저장
+      }
+    }
+    
+
+    if (unripeTomato == 0){//모든 토마토가 안익었으면
+      System.out.println(0);//0 출력
+      return;
+    }
+    
+    for (int i = 0; i < n; i++){
+      for (int j = 0; j < m; j++){
+        if (totmato[i][j] == 1){//모든 배열 중에서 익은 토마토를
+          q.add(new int[] {i,j});//큐에 넣기
+        }
+      }
+    }
+    
+    while (!q.isEmpty()){
+      int size = q.size();//현재 큐의 사이즈
+      for (int s = 0; s < size; s++){
+        int[] index = q.poll();//인덱스 저장장
+        
+        for (int i = 0; i < 4; i++){
+          int nr = index[0] + dr[i];//다음 인덱스 계산
+          int nc = index[1] + dc[i];//다음 인덱스 계산
+          
+          if (nr >= 0 && nr < n && nc >= 0 && nc< m){//다음 인덱스가 맵 안에 있으면
+            if (totmato[nr][nc] == 0){//해당 토마토가 안 익었으면
+              totmato[nr][nc] = 1;//토마토 익은 처리
+              q.add(new int[] {nr, nc});//큐에 다음 토마토의 인덱스 넣기
+              unripeTomato--;//안 익은 토마토 감소처리
+            }
+          }
+        }
+      } 
+        day++;
+    }
+    
+    if(unripeTomato > 0){
+      System.out.println(-1);
+    }
+    else{
+      System.out.println(day);
+    }
+  }
+}
